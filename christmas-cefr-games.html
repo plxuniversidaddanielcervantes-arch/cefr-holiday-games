@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Christmas CEFR Games — Memory • Search • Crossword • Snowman 🎄</title>
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
+  body {
+    background: #0d1b2a;
+    background-image: radial-gradient(#2b4a6f 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: #fff;
+    text-align: center;
+    padding: 25px 15px;
+    min-height: 100vh;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { color: #ffd700; font-size: 1.8rem; margin-bottom: 5px; text-shadow: 0 0 10px rgba(255,215,0,0.4); }
+  .subtitle { color: #c5d5e8; margin-bottom: 20px; font-size: 0.95rem; }
+
+  .nav-tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab {
+    padding: 10px 18px; border: none; border-radius: 10px 10px 0 0;
+    background: #1d3557; color: #a8c0d8; cursor: pointer; transition: all 0.25s ease;
+  }
+  .tab.active { background: #c62828; color: white; font-weight: bold; box-shadow: 0 0 0 2px #fff inset; }
+  .tab:hover { color: #fff; }
+
+  .cefr-buttons { margin: 15px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .cefr {
+    padding: 10px 16px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: all 0.25s ease;
+  }
+  .cefr-a1 { background: #4cd137; color: #0f3d0a; }
+  .cefr-a2 { background: #a8e063; color: #2d5a00; }
+  .cefr-b1 { background: #ffd700; color: #5c4a00; }
+  .cefr-b2 { background: #ff9f1c; color: #5c3700; }
+  .cefr-c1 { background: #e8590c; color: white; }
+  .cefr-c2 { background: #c62828; color: white; }
+  .cefr:hover { transform: scale(1.08); }
+  .cefr.active { box-shadow: 0 0 0 3px #fff; transform: scale(1.05); }
+
+  .level-label { margin: 10px 0; font-size: 1.1rem; color: #ffd700; }
+  .cefr-desc { font-size: 0.9rem; color: #9fb6cf; margin-bottom: 15px; }
+
+  .game-buttons { margin: 15px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .btn {
+    padding: 12px 22px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: all 0.25s ease;
+  }
+  .btn-primary { background: #2e7d32; color: white; }
+  .btn-primary:hover { transform: scale(1.05); background: #43a047; }
+  .btn-primary.active { box-shadow: 0 0 0 3px #fff; transform: scale(1.05); }
+  .btn-secondary { background: #c62828; color: white; }
+  .btn-secondary:hover { background: #e53935; }
+  .btn-hint { background: #60a6f2; color: white; }
+  .btn-hint:hover { background: #80b9f5; }
+  .btn-check { background: #9b59b6; color: white; }
+  .btn-check:hover { background: #b980d6; }
+
+  .stats {
+    background: rgba(29, 53, 87, 0.7); border-radius: 12px; padding: 15px;
+    margin: 20px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px 25px; font-size: 1rem;
+  }
+  .stat-item span { color: #ffd700; font-weight: bold; font-size: 1.1rem; }
+
+  /* Memory Game */
+  .game-board { display: grid; gap: 12px; justify-content: center; margin: 25px auto; }
+  .card {
+    width: 100px; height: 125px; background: #1d3557; border-radius: 12px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 3px solid #3a5a82; transition: all 0.35s ease; padding: 8px;
+  }
+  .card:hover { border-color: #ffd700; transform: translateY(-3px); }
+  .card.flipped { background: #2a4a75; border-color: #ffd700; transform: none; }
+  .card.matched { background: #1e4d2b; border-color: #4cd137; cursor: default; box-shadow: 0 0 12px rgba(76,209,55,0.3); }
+  .card .icon { font-size: 2.2rem; line-height: 1; margin-bottom: 4px; }
+  .card .word { font-size: 0.8rem; color: #e6eef6; text-align: center; }
+
+  /* Word Search */
+  .game-wrapper { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin: 25px 0; }
+  .grid-container { user-select: none; }
+  .grid-row { display: flex; justify-content: center; }
+  .cell {
+    width: 34px; height: 34px; background: #1d3557; border: 2px solid #3a5a82;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease;
+  }
+  .cell:hover { border-color: #ffd700; background: #2a4a75; }
+  .cell.selected { background: #ffd700; color: #000; border-color: #ffcc00; }
+  .cell.found { background: #2d5a2d; color: #90ee90; border-color: #4cd137; }
+  .cell.highlight-hint { background: rgba(255,215,0,0.5); border-color: #ffd700; animation: pulse 1s infinite; font-weight: 900; font-size: 1.1rem; }
+  @keyframes pulse { 0%{opacity:0.5;} 50%{opacity:1;} 100%{opacity:0.5;} }
+
+  .words-panel {
+    background: rgba(29, 53, 87, 0.5); border-radius: 12px; padding: 20px;
+    min-width: 200px; max-width: 280px; text-align: left;
+  }
+  .words-panel h3 { color: #ffd700; margin-bottom: 12px; text-align: center; font-size: 1rem; }
+  .word-item {
+    padding: 6px 10px; margin: 3px 0; border-radius: 6px; transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
+  }
+  .word-item.found { background: rgba(76,209,55,0.2); color: #4cd137; text-decoration: line-through; }
+  .word-item .icon { font-size: 1.1rem; }
+
+  /* Crossword */
+  .crossword-wrapper { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin: 25px 0; }
+  .crossword-grid { display: inline-block; }
+  .cw-row { display: flex; }
+  .cw-cell {
+    width: 38px; height: 38px; border: 1px solid #44566e;
+    background: #16293f; position: relative;
+  }
+  .cw-cell.blocked { background: #0a1522; border-color: #1c2f47; }
+  .cw-cell input {
+    width: 100%; height: 100%; border: none; background: transparent;
+    text-align: center; font-weight: bold; font-size: 1.1rem; color: #fff;
+    text-transform: uppercase; outline: none; padding: 0;
+  }
+  .cw-cell input:focus { background: rgba(255,215,0,0.2); box-shadow: inset 0 0 0 2px #ffd700; }
+  .cw-cell.correct { background: rgba(76,209,55,0.15); }
+  .cw-cell.wrong { background: rgba(255,60,60,0.2); }
+  .cw-cell.highlight-hint { background: rgba(255,215,0,0.4) !important; animation: pulse 1s infinite; }
+  .cw-number {
+    position: absolute; top: 1px; left: 2px; font-size: 0.6rem; color: #9fb6cf;
+    pointer-events: none;
+  }
+  .clues-panel {
+    background: rgba(29, 53, 87, 0.5); border-radius: 12px; padding: 20px;
+    min-width: 260px; max-width: 320px; text-align: left; max-height: 500px; overflow-y: auto;
+  }
+  .clues-panel h3 { color: #ffd700; margin: 10px 0; font-size: 1rem; position: sticky; top: 0; background: #16293f; padding: 6px 0; }
+  .clue {
+    padding: 6px 8px; margin: 3px 0; border-radius: 5px; cursor: pointer;
+    transition: all 0.2s ease; font-size: 0.9rem;
+  }
+  .clue:hover { background: rgba(255,215,0,0.15); }
+  .clue.solved { color: #4cd137; text-decoration: line-through; }
+
+  /* Snowman Guess (Hangman) */
+  .hangman-wrapper { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; align-items: flex-start; margin: 25px 0; }
+  .hangman-left { min-width: 240px; }
+  .hangman-svg { background: rgba(29, 53, 87, 0.5); border-radius: 12px; padding: 10px; }
+  .hangman-svg .sm-part { opacity: 0; transition: opacity 0.4s ease; }
+  .hangman-svg .sm-part.show { opacity: 1; }
+  .hangman-svg .sm-ground { fill: rgba(180,220,255,0.15); }
+  .hangman-svg circle { fill: #eaf6ff; stroke: #7fb7e8; stroke-width: 2; }
+  .hangman-svg line { stroke: #8d6e63; stroke-width: 3; stroke-linecap: round; }
+  .hangman-svg .sm-eye { fill: #263238; stroke: none; }
+  .hangman-svg .sm-nose { stroke: #ff8f00 !important; stroke-width: 3; }
+  .hangman-svg .sm-btn { fill: #263238; stroke: none; }
+  .hangman-svg .sm-hatbrim, .hangman-svg .sm-hattop { fill: #37474f; stroke: #263238; stroke-width: 1; }
+  .hangman-svg .sm-band { fill: #c62828; stroke: none; }
+  .hangman-clue {
+    background: rgba(255,215,0,0.1); border: 1px solid #ffd700; border-radius: 10px;
+    padding: 12px 18px; margin: 15px auto; max-width: 400px; font-size: 1rem; color: #ffd700;
+  }
+  .hangman-word { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 20px 0; min-height: 45px; }
+  .hm-letter {
+    width: 34px; height: 42px; border-bottom: 3px solid #ffd700;
+    display: flex; align-items: flex-end; justify-content: center;
+    font-size: 1.6rem; font-weight: bold; color: #fff; padding-bottom: 2px;
+    transition: all 0.3s ease;
+  }
+  .hm-letter.revealed { color: #4cd137; }
+  .hm-letter.missed { color: #ff6b6b; border-bottom-color: #ff6b6b; }
+  .hangman-right { min-width: 280px; max-width: 360px; }
+  .hangman-keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+  .hm-key {
+    padding: 10px 0; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem;
+    cursor: pointer; background: #3a5a82; color: #fff; transition: all 0.2s ease;
+  }
+  .hm-key:hover:not(:disabled) { background: #2e7d32; transform: scale(1.08); }
+  .hm-key:disabled { cursor: not-allowed; opacity: 0.4; }
+  .hm-key.correct { background: #2d5a2d; color: #90ee90; opacity: 1; }
+  .hm-key.wrong { background: #5a2d2d; color: #ff9090; opacity: 1; }
+  .hangman-status { font-size: 1.1rem; margin: 12px 0; min-height: 28px; font-weight: bold; }
+  .hangman-status.win { color: #4cd137; }
+  .hangman-status.lose { color: #ff6b6b; }
+
+  .message {
+    margin-top: 20px; padding: 20px; border-radius: 12px; display: none;
+    font-size: 1.2rem; font-weight: bold;
+  }
+  .message.show { display: block; animation: fadeIn 0.5s ease; }
+  .win { background: rgba(255,215,0,0.15); border: 2px solid #ffd700; color: #ffd700; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+  .instructions {
+    margin-top: 30px; background: rgba(29, 53, 87, 0.5); border-radius: 12px;
+    padding: 18px; text-align: left; font-size: 0.9rem; color: #c5d5e8;
+  }
+  .instructions h3 { color: #ffd700; margin-bottom: 10px; }
+  .instructions ol, .instructions ul { margin-left: 20px; }
+  .instructions li { margin: 5px 0; }
+  .instructions code { background: #16293f; padding: 2px 6px; border-radius: 4px; color: #ffd700; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 480px) {
+    .card { width: 85px; height: 110px; }
+    .cell, .cw-cell { width: 30px; height: 30px; font-size: 0.85rem; }
+    .hm-letter { width: 26px; height: 36px; font-size: 1.3rem; }
+    .hangman-keyboard { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .hm-key { padding: 8px 0; font-size: 0.85rem; }
+    h1 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🎄 Christmas CEFR Learning Games ❄️</h1>
+  <p class="subtitle">Step 1: Pick your level → Step 2: Choose a game below</p>
+
+  <!-- CEFR Level Selection -->
+  <div class="cefr-buttons">
+    <button class="cefr cefr-a1" id="btnA1" onclick="setLevel('A1')">A1<br>Beginner</button>
+    <button class="cefr cefr-a2" id="btnA2" onclick="setLevel('A2')">A2<br>Elementary</button>
+    <button class="cefr cefr-b1" id="btnB1" onclick="setLevel('B1')">B1<br>Intermediate</button>
+    <button class="cefr cefr-b2" id="btnB2" onclick="setLevel('B2')">B2<br>Upper-Intermediate</button>
+    <button class="cefr cefr-c1" id="btnC1" onclick="setLevel('C1')">C1<br>Advanced</button>
+    <button class="cefr cefr-c2" id="btnC2" onclick="setLevel('C2')">C2<br>Mastery</button>
+  </div>
+  <p class="level-label" id="levelStatus">👆 Select a level first</p>
+  <p class="cefr-desc" id="levelDesc">Words match your proficiency level</p>
+
+  <!-- Game Tabs -->
+  <div class="nav-tabs">
+    <button class="tab active" id="tabMem" onclick="showGame('memory')">🧠 Memory</button>
+    <button class="tab" id="tabSearch" onclick="showGame('search')">🔤 Word Search</button>
+    <button class="tab" id="tabCross" onclick="showGame('crossword')">📝 Crossword</button>
+    <button class="tab" id="tabHang" onclick="showGame('hangman')">⛄ Snowman</button>
+  </div>
+
+  <!-- MEMORY GAME -->
+  <div id="memSection">
+    <div class="game-buttons" id="memBtns">
+      <button class="btn btn-primary" onclick="startMem(1, this)">Level 1 (6 pairs)</button>
+      <button class="btn btn-primary" onclick="startMem(2, this)">Level 2 (8 pairs)</button>
+      <button class="btn btn-primary" onclick="startMem(3, this)">Level 3 (12 pairs)</button>
+      <button class="btn btn-secondary" onclick="restartMem()">🔄 Restart</button>
+    </div>
+    <div class="stats">
+      <div class="stat-item">Moves: <span id="memMoves">0</span></div>
+      <div class="stat-item">Found: <span id="memFound">0</span>/<span id="memTotal">0</span></div>
+      <div class="stat-item">Time: <span id="memTimer">00:00</span></div>
+    </div>
+    <div class="game-board" id="memBoard"></div>
+    <div id="memMsg" class="message win"></div>
+  </div>
+
+  <!-- WORD SEARCH -->
+  <div id="searchSection" class="hidden">
+    <div class="game-buttons" id="searchBtns">
+      <button class="btn btn-primary" onclick="startSearch(1, this)">Easy →↓</button>
+      <button class="btn btn-primary" onclick="startSearch(2, this)">Medium →↓↘</button>
+      <button class="btn btn-primary" onclick="startSearch(3, this)">Hard All directions</button>
+      <button class="btn btn-hint" onclick="showSearchHint()">💡 Hint</button>
+      <button class="btn btn-secondary" onclick="restartSearch()">🔄 Restart</button>
+    </div>
+    <div class="stats">
+      <div class="stat-item">Found: <span id="srchFound">0</span>/<span id="srchTotal">0</span></div>
+      <div class="stat-item">Time: <span id="srchTimer">00:00</span></div>
+    </div>
+    <div class="game-wrapper">
+      <div class="grid-container" id="srchGrid"></div>
+      <div class="words-panel">
+        <h3>📝 Words to Find</h3>
+        <div id="srchList"></div>
+      </div>
+    </div>
+    <div id="srchMsg" class="message win"></div>
+  </div>
+
+  <!-- CROSSWORD -->
+  <div id="crossSection" class="hidden">
+    <div class="game-buttons" id="crossBtns">
+      <button class="btn btn-primary" onclick="startCross(1, this)">Level 1 (4 words)</button>
+      <button class="btn btn-primary" onclick="startCross(2, this)">Level 2 (6 words)</button>
+      <button class="btn btn-primary" onclick="startCross(3, this)">Level 3 (8 words)</button>
+      <button class="btn btn-hint" onclick="showCrossHint()">💡 Hint</button>
+      <button class="btn btn-check" onclick="checkCross()">✅ Check</button>
+      <button class="btn btn-secondary" onclick="restartCross()">🔄 Restart</button>
+    </div>
+    <div class="stats">
+      <div class="stat-item">Solved: <span id="crossFound">0</span>/<span id="crossTotal">0</span></div>
+      <div class="stat-item">Time: <span id="crossTimer">00:00</span></div>
+    </div>
+    <div class="crossword-wrapper">
+      <div class="crossword-grid" id="crossGrid"></div>
+      <div class="clues-panel">
+        <h3>➡️ Across</h3>
+        <div id="cluesAcross"></div>
+        <h3>⬇️ Down</h3>
+        <div id="cluesDown"></div>
+      </div>
+    </div>
+    <div id="crossMsg" class="message win"></div>
+  </div>
+
+  <!-- SNOWMAN GUESS -->
+  <div id="hangSection" class="hidden">
+    <div class="game-buttons" id="hangBtns">
+      <button class="btn btn-primary" onclick="startHangman(1, this)">Level 1 (4 words)</button>
+      <button class="btn btn-primary" onclick="startHangman(2, this)">Level 2 (6 words)</button>
+      <button class="btn btn-primary" onclick="startHangman(3, this)">Level 3 (8 words)</button>
+      <button class="btn btn-hint" onclick="hangmanHint()">💡 Hint</button>
+      <button class="btn btn-secondary" onclick="restartHangman()">🔄 Restart</button>
+    </div>
+    <div class="stats">
+      <div class="stat-item">Word: <span id="hangWordNum">0</span>/<span id="hangWordTotal">0</span></div>
+      <div class="stat-item">Solved: <span id="hangSolved">0</span></div>
+      <div class="stat-item">Misses: <span id="hangWrong">0</span>/6</div>
+      <div class="stat-item">Time: <span id="hangTimer">00:00</span></div>
+    </div>
+    <div class="hangman-wrapper">
+      <div class="hangman-left">
+        <svg class="hangman-svg" width="220" height="260" viewBox="0 0 220 260">
+          <ellipse class="sm-ground" cx="110" cy="242" rx="95" ry="10"/>
+          <g id="sm-body" class="sm-part"><circle cx="110" cy="196" r="40"/></g>
+          <g id="sm-head" class="sm-part"><circle cx="110" cy="120" r="26"/></g>
+          <g id="sm-armL" class="sm-part"><line x1="110" y1="176" x2="72" y2="146"/></g>
+          <g id="sm-armR" class="sm-part"><line x1="110" y1="176" x2="148" y2="146"/></g>
+          <g id="sm-face" class="sm-part">
+            <circle class="sm-eye" cx="101" cy="114" r="3"/>
+            <circle class="sm-eye" cx="119" cy="114" r="3"/>
+            <line class="sm-nose" x1="110" y1="120" x2="126" y2="124"/>
+            <circle class="sm-btn" cx="110" cy="186" r="3.5"/>
+            <circle class="sm-btn" cx="110" cy="200" r="3.5"/>
+            <circle class="sm-btn" cx="110" cy="214" r="3.5"/>
+          </g>
+          <g id="sm-hat" class="sm-part">
+            <rect class="sm-hatbrim" x="86" y="94" width="48" height="8" rx="3"/>
+            <rect class="sm-hattop" x="96" y="66" width="28" height="30" rx="2"/>
+            <rect class="sm-band" x="96" y="86" width="28" height="8"/>
+          </g>
+        </svg>
+        <div class="hangman-clue" id="hangClue">Select a level and difficulty to start</div>
+        <div class="hangman-word" id="hangWord"></div>
+        <div class="hangman-status" id="hangStatus"></div>
+      </div>
+      <div class="hangman-right">
+        <h3 style="color:#ffd700; font-size:1rem; margin-bottom:8px;">🔤 Guess a Letter</h3>
+        <div class="hangman-keyboard" id="hangKeyboard"></div>
+      </div>
+    </div>
+    <div id="hangMsg" class="message win"></div>
+  </div>
+
+  <div class="instructions">
+    <h3>📖 How to Share with Teachers</h3>
+    <ol>
+      <li>This is a <strong>single self-contained file</strong> — no internet needed!</li>
+      <li>Just send this <code>.html</code> file to other teachers</li>
+      <li>They save it and double-click to open in any browser</li>
+      <li>All 4 games + 6 CEFR levels work offline ✅</li>
+    </ol>
+    <h3 style="margin-top:15px">🎮 How to Play</h3>
+    <ul>
+      <li><strong>Step 1:</strong> Select a CEFR level button (A1 = easiest, C2 = most advanced)</li>
+      <li><strong>Step 2:</strong> Click a game tab → choose difficulty level (selected button gets white border)</li>
+      <li><strong>🧠 Memory:</strong> Click cards to flip them — match the icon with its word</li>
+      <li><strong>🔤 Word Search:</strong> Click and drag over letters to select words from the list</li>
+      <li><strong>📝 Crossword:</strong> Read clues → type letters (cursor auto-advances) → click ✅ Check</li>
+      <li><strong>⛄ Snowman:</strong> Read the clue → click letters to guess the word. 6 misses make the snowman melt! Solve all words in the round!</li>
+      <li><strong>💡 Hint:</strong> Reveals one letter (Word Search / Crossword) or one missing letter (Snowman)</li>
+      <li><strong>🔄 Restart:</strong> Generates a fresh puzzle with the same words</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// ==================================================
+// 📚 CHRISTMAS VOCABULARY WITH DEFINITIONS (6 levels × 12 words)
+// ==================================================
+const VOCAB = {
+  A1: { name: "Beginner — Simple nouns", words: [
+    { word: "TREE", display: "Tree", icon: "🌲", clue: "Evergreen decorated with lights at Christmas" },
+    { word: "SANTA", display: "Santa", icon: "🎅", clue: "Kind man in red who brings gifts at Christmas" },
+    { word: "GIFT", display: "Gift", icon: "🎁", clue: "Present wrapped and given at Christmas" },
+    { word: "SNOW", display: "Snow", icon: "❄️", clue: "Soft white flakes that fall in winter" },
+    { word: "BELL", display: "Bell", icon: "🔔", clue: "Metal instrument that rings at Christmas" },
+    { word: "STAR", display: "Star", icon: "⭐", clue: "Shining ornament placed on top of the tree" },
+    { word: "DEER", display: "Deer", icon: "🦌", clue: "Animal that pulls Santa's sleigh" },
+    { word: "SNOWMAN", display: "Snowman", icon: "⛄", clue: "Figure made of stacked snowballs" },
+    { word: "STOCKING", display: "Stocking", icon: "🧦", clue: "Long sock hung up for small gifts" },
+    { word: "COOKIE", display: "Cookie", icon: "🍪", clue: "Sweet baked treat left for Santa" },
+    { word: "CANDLE", display: "Candle", icon: "🕯️", clue: "Stick of wax that gives warm light" },
+    { word: "ANGEL", display: "Angel", icon: "👼", clue: "Winged figure often on top of the tree" }
+  ]},
+  A2: { name: "Elementary — Compound words", words: [
+    { word: "SNOWBALL", display: "Snowball", icon: "⚪", clue: "Ball of pressed snow thrown in a fight" },
+    { word: "SNOWFLAKE", display: "Snowflake", icon: "❄️", clue: "Single crystal of falling snow" },
+    { word: "CANDYCANE", display: "Candy Cane", icon: "🍬", clue: "Red-and-white striped sweet shaped like a hook" },
+    { word: "FIREPLACE", display: "Fireplace", icon: "🔥", clue: "Warm hearth where stockings are hung" },
+    { word: "GIFTBOX", display: "Gift Box", icon: "🎀", clue: "Present wrapped with a bow" },
+    { word: "NORTHPOLE", display: "North Pole", icon: "🧭", clue: "Far northern home of Santa Claus" },
+    { word: "SNOWSTORM", display: "Snowstorm", icon: "🌨️", clue: "Heavy fall of snow with strong wind" },
+    { word: "MISTLETOE", display: "Mistletoe", icon: "🌿", clue: "Green plant hung under which people kiss" },
+    { word: "REINDEER", display: "Reindeer", icon: "🦌", clue: "Large deer with antlers that pulls the sleigh" },
+    { word: "DECEMBER", display: "December", icon: "📅", clue: "Month in which Christmas happens" },
+    { word: "HOLIDAY", display: "Holiday", icon: "🎊", clue: "Special day of rest and celebration" },
+    { word: "WINTER", display: "Winter", icon: "☃️", clue: "Coldest season of the year" }
+  ]},
+  B1: { name: "Intermediate — Descriptive words", words: [
+    { word: "FROSTY", display: "Frosty", icon: "❄️", clue: "Cold and covered with white frost" },
+    { word: "FESTIVE", display: "Festive", icon: "🎉", clue: "Cheerful and full of holiday spirit" },
+    { word: "CHEERFUL", display: "Cheerful", icon: "😊", clue: "Happy, friendly and full of joy" },
+    { word: "COZY", display: "Cozy", icon: "🛋️", clue: "Warm, comfortable and welcoming" },
+    { word: "SHINING", display: "Shining", icon: "✨", clue: "Giving out a bright steady light" },
+    { word: "FROZEN", display: "Frozen", icon: "🧊", clue: "Turned into solid ice by cold" },
+    { word: "JOYFUL", display: "Joyful", icon: "🥳", clue: "Feeling or showing great happiness" },
+    { word: "MERRY", display: "Merry", icon: "😄", clue: "Cheerful; the word in \"Merry Christmas\"" },
+    { word: "WHITE", display: "White", icon: "⚪", clue: "Color of clean new snow" },
+    { word: "WARMTH", display: "Warmth", icon: "🧣", clue: "Quality of being pleasantly warm" },
+    { word: "DECORATED", display: "Decorated", icon: "🎀", clue: "Adorned with ornaments, lights and bows" },
+    { word: "SLEEPY", display: "Sleepy", icon: "😴", clue: "Tired and drowsy after dinner" }
+  ]},
+  B2: { name: "Upper-Intermediate — Precise vocabulary", words: [
+    { word: "SPARKLING", display: "Sparkling", icon: "✨", clue: "Shining with many small quick flashes" },
+    { word: "TWINKLING", display: "Twinkling", icon: "🌟", clue: "Flashing on and off like fairy lights" },
+    { word: "CINNAMON", display: "Cinnamon", icon: "🌰", clue: "Warm brown spice used in seasonal baking" },
+    { word: "EVERGREEN", display: "Evergreen", icon: "🌲", clue: "Tree that keeps its green leaves all year" },
+    { word: "GLITTERY", display: "Glittery", icon: "✨", clue: "Covered in tiny reflective sparkles" },
+    { word: "RADIANT", display: "Radiant", icon: "😊", clue: "Glowing with happiness or bright light" },
+    { word: "SCENTED", display: "Scented", icon: "🌸", clue: "Having a pleasant festive fragrance" },
+    { word: "SERENE", display: "Serene", icon: "🌙", clue: "Calm, peaceful and quiet" },
+    { word: "CHILLED", display: "Chilled", icon: "🥶", clue: "Cold but refreshing" },
+    { word: "CUSTOMARY", display: "Customary", icon: "🎎", clue: "Traditionally expected at this time of year" },
+    { word: "FROSTED", display: "Frosted", icon: "🎂", clue: "Covered with a smooth sweet icing layer" },
+    { word: "BLUSTERY", display: "Blustery", icon: "💨", clue: "Cold, windy and noisy weather" }
+  ]},
+  C1: { name: "Advanced — Sophisticated vocabulary", words: [
+    { word: "NOSTALGIC", display: "Nostalgic", icon: "🎞️", clue: "Wistfully remembering past family Christmases" },
+    { word: "GLACIAL", display: "Glacial", icon: "🧊", clue: "Extremely cold; relating to ice" },
+    { word: "EPIPHANY", display: "Epiphany", icon: "🌟", clue: "Feast celebrating the three Magi's visit" },
+    { word: "EBULLIENT", display: "Ebullient", icon: "🥂", clue: "Bubbling over with excitement and joy" },
+    { word: "LUMINOUS", display: "Luminous", icon: "💡", clue: "Emitting a soft steady light" },
+    { word: "YULETIDE", display: "Yuletide", icon: "🎄", clue: "Old-fashioned term for the Christmas season" },
+    { word: "INCARNATE", display: "Incarnate", icon: "👶", clue: "Presented in human form; a Nativity theme" },
+    { word: "SACRED", display: "Sacred", icon: "🕊️", clue: "Holy; connected with religious belief" },
+    { word: "RESINOUS", display: "Resinous", icon: "🌲", clue: "Smelling of sticky pine sap" },
+    { word: "CRANBERRY", display: "Cranberry", icon: "🍒", clue: "Tart red berry served with the festive dinner" },
+    { word: "GARLANDED", display: "Garlanded", icon: "🌿", clue: "Adorned with wreaths and loops of greenery" },
+    { word: "SOLSTICE", display: "Solstice", icon: "☀️", clue: "Shortest day of the year, around December 21" }
+  ]},
+  C2: { name: "Mastery — Rare & literary vocabulary", words: [
+    { word: "WASSAIL", display: "Wassail", icon: "🍎", clue: "Spiced cider; an old English caroling custom" },
+    { word: "KRAMPUS", display: "Krampus", icon: "👿", clue: "Horned folklore figure who scolds naughty children" },
+    { word: "HOARFROST", display: "Hoarfrost", icon: "❄️", clue: "Fine white ice crystals forming on cold mornings" },
+    { word: "MYRRH", display: "Myrrh", icon: "🧴", clue: "Fragrant resin, one of the Magi's three gifts" },
+    { word: "ADVENT", display: "Advent", icon: "🕯️", clue: "Four weeks of preparation before Christmas" },
+    { word: "STARLIT", display: "Starlit", icon: "🌟", clue: "Lit by the stars shining above" },
+    { word: "HIBERNAL", display: "Hibernal", icon: "🐻", clue: "Literary adjective meaning 'relating to winter'" },
+    { word: "MANGER", display: "Manger", icon: "🐄", clue: "Wooden feeding trough where the baby lay" },
+    { word: "SLEIGH", display: "Sleigh", icon: "🛷", clue: "Sled with runners pulled by reindeer" },
+    { word: "YULE", display: "Yule", icon: "🎄", clue: "Old English word for the Christmas feast" },
+    { word: "NOEL", display: "Noel", icon: "🎶", clue: "Carol word for Christmas, from French" },
+    { word: "CHIMNEY", display: "Chimney", icon: "🏠", clue: "Sooty flue down which Santa climbs" }
+  ]}
+};
+
+const SEARCH_CONFIG = {
+  1: { gridSize: 10, directions: [[0,1],[1,0]], wordCount: 6 },
+  2: { gridSize: 12, directions: [[0,1],[1,0],[1,1]], wordCount: 9 },
+  3: { gridSize: 14, directions: [[0,1],[1,0],[1,1],[0,-1],[-1,0],[-1,-1],[1,-1],[-1,1]], wordCount: 12 }
+};
+
+const SNOWMAN_PARTS = ['sm-body','sm-head','sm-armL','sm-armR','sm-face','sm-hat'];
+const HANGMAN_MAX_WRONG = 6;
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+// GLOBAL STATE
+let currentLevel = null, activeGame = 'memory';
+let memCards=[], memFlipped=[], memFoundCount=0, memMoveCount=0, memTotalPairs=0, memIsLocked=false, memDifficulty=null, memTimer=null, memTime=0;
+let searchGrid=[], searchWordsPlaced=[], searchFound=[], searchSelection=[], searchSelecting=false, searchStartPos=null, searchDifficulty=null, searchTimer=null, searchTime=0, searchTotalCount=0;
+let crossWords=[], crossEntries=[], crossFound=[], crossDifficulty=null, crossTimer=null, crossTime=0, crossGridData=[], crossCellsRef={}, crossTypeDir='A', crossStartNums={};
+let hangQueue=[], hangCurrent=null, hangGuessed=new Set(), hangWrong=0, hangSolved=0, hangDifficulty=null, hangTimer=null, hangTime=0, hangLocked=false;
+
+// ==================================================
+// LEVEL SELECTION & UTILITIES
+// ==================================================
+function setLevel(level) {
+  currentLevel = level;
+  document.querySelectorAll('.cefr').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn'+level).classList.add('active');
+  document.getElementById('levelStatus').textContent = '✅ ' + level + ' — ' + VOCAB[level].name;
+  document.getElementById('levelDesc').textContent = VOCAB[level].words.length + ' words ready';
+  memFlipped = []; memFoundCount = 0; memMoveCount = 0;
+  searchFound = []; searchSelection = []; crossFound = [];
+}
+
+function showGame(game) {
+  activeGame = game;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  ['memSection','searchSection','crossSection','hangSection'].forEach(s => document.getElementById(s).classList.add('hidden'));
+  if (game==='memory') { document.getElementById('tabMem').classList.add('active'); document.getElementById('memSection').classList.remove('hidden'); }
+  else if (game==='search') { document.getElementById('tabSearch').classList.add('active'); document.getElementById('searchSection').classList.remove('hidden'); }
+  else if (game==='crossword') { document.getElementById('tabCross').classList.add('active'); document.getElementById('crossSection').classList.remove('hidden'); }
+  else { document.getElementById('tabHang').classList.add('active'); document.getElementById('hangSection').classList.remove('hidden'); }
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function setActiveBtn(containerId, btn) {
+  if (!btn) return;
+  const container = document.getElementById(containerId);
+  container.querySelectorAll('.btn-primary').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ==================================================
+// 🧠 MEMORY GAME
+// ==================================================
+function startMem(diff, btn) {
+  if (!currentLevel) { alert('👆 Select a CEFR level first!'); return; }
+  setActiveBtn('memBtns', btn);
+  memDifficulty = diff;
+  const words = VOCAB[currentLevel].words;
+  const pairCount = [6,8,12][diff-1];
+  memTotalPairs = pairCount; memFoundCount = 0; memMoveCount = 0; memFlipped = []; memIsLocked = false; memTime = 0;
+  if (memTimer) clearInterval(memTimer);
+  document.getElementById('memTimer').textContent = '00:00';
+  memTimer = setInterval(() => {
+    memTime++;
+    const m = Math.floor(memTime/60).toString().padStart(2,'0');
+    const s = (memTime%60).toString().padStart(2,'0');
+    document.getElementById('memTimer').textContent = m + ':' + s;
+  }, 1000);
+  const selected = words.slice(0, pairCount);
+  memCards = shuffle([...selected, ...selected]);
+  document.getElementById('memMoves').textContent = '0';
+  document.getElementById('memFound').textContent = '0';
+  document.getElementById('memTotal').textContent = pairCount;
+  document.getElementById('memMsg').classList.remove('show');
+  const board = document.getElementById('memBoard');
+  board.innerHTML = '';
+  board.style.gridTemplateColumns = 'repeat(' + (diff===1?4:diff===2?4:6) + ', 1fr)';
+  memCards.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.index = idx;
+    card.innerHTML = '<span class="icon">❓</span><span class="word">Click</span>';
+    card.onclick = () => flipCard(card, idx, item);
+    board.appendChild(card);
+  });
+}
+
+function restartMem() {
+  if (memDifficulty) startMem(memDifficulty, document.querySelector('#memBtns .btn-primary.active'));
+  else alert('Start a game first!');
+}
+
+function flipCard(card, index, item) {
+  if (memIsLocked || memFlipped.includes(index) || card.classList.contains('matched')) return;
+  card.innerHTML = '<span class="icon">' + item.icon + '</span><span class="word">' + item.display + '</span>';
+  card.classList.add('flipped');
+  memFlipped.push(index);
+  if (memFlipped.length === 2) {
+    memMoveCount++;
+    document.getElementById('memMoves').textContent = memMoveCount;
+    memIsLocked = true;
+    const i1 = memFlipped[0], i2 = memFlipped[1];
+    const c1 = document.querySelector('[data-index="' + i1 + '"]');
+    const c2 = document.querySelector('[data-index="' + i2 + '"]');
+    if (memCards[i1].word === memCards[i2].word) {
+      setTimeout(() => {
+        c1.classList.add('matched'); c2.classList.add('matched');
+        memFoundCount++;
+        document.getElementById('memFound').textContent = memFoundCount;
+        memFlipped = []; memIsLocked = false;
+        if (memFoundCount === memTotalPairs) {
+          clearInterval(memTimer);
+          let rt = '🎉 Great job!';
+          if (memMoveCount <= memTotalPairs + 2) rt = '🌟 Outstanding!';
+          else if (memMoveCount <= memTotalPairs + 5) rt = '✨ Very well done!';
+          document.getElementById('memMsg').textContent = rt + ' Finished in ' + memMoveCount + ' moves & ' + document.getElementById('memTimer').textContent + '!';
+          document.getElementById('memMsg').classList.add('show');
+        }
+      }, 550);
+    } else {
+      setTimeout(() => {
+        c1.innerHTML = '<span class="icon">❓</span><span class="word">Click</span>';
+        c2.innerHTML = '<span class="icon">❓</span><span class="word">Click</span>';
+        c1.classList.remove('flipped'); c2.classList.remove('flipped');
+        memFlipped = []; memIsLocked = false;
+      }, 1000);
+    }
+  }
+}
+
+// ==================================================
+// 🔤 WORD SEARCH
+// ==================================================
+function startSearch(diff, btn) {
+  if (!currentLevel) { alert('👆 Select a CEFR level first!'); return; }
+  setActiveBtn('searchBtns', btn);
+  searchDifficulty = diff;
+  const cfg = SEARCH_CONFIG[diff];
+  const words = VOCAB[currentLevel].words.slice(0, cfg.wordCount);
+  searchFound = []; searchSelection = []; searchWordsPlaced = []; searchTime = 0;
+  if (searchTimer) clearInterval(searchTimer);
+  document.getElementById('srchTimer').textContent = '00:00';
+  searchTimer = setInterval(() => {
+    searchTime++;
+    const m = Math.floor(searchTime/60).toString().padStart(2,'0');
+    const s = (searchTime%60).toString().padStart(2,'0');
+    document.getElementById('srchTimer').textContent = m + ':' + s;
+  }, 1000);
+  document.getElementById('srchFound').textContent = '0';
+  document.getElementById('srchMsg').classList.remove('show');
+  searchGrid = Array(cfg.gridSize).fill().map(() => Array(cfg.gridSize).fill(''));
+  words.forEach(item => placeOneSearchWord(item, cfg));
+  fillSearchGrid(cfg.gridSize);
+  renderSearchGrid(cfg.gridSize);
+  const placedWords = words.filter(w => searchWordsPlaced.some(p => p.word === w.word));
+  searchTotalCount = placedWords.length;
+  document.getElementById('srchTotal').textContent = searchTotalCount;
+  renderSearchList(placedWords);
+}
+
+function restartSearch() {
+  if (searchDifficulty) startSearch(searchDifficulty, document.querySelector('#searchBtns .btn-primary.active'));
+  else alert('Start a game first!');
+}
+
+function placeOneSearchWord(item, cfg) {
+  const word = item.word;
+  let placed = false;
+  const dirs = shuffle([...cfg.directions]);
+  for (let di = 0; di < dirs.length && !placed; di++) {
+    const dr = dirs[di][0], dc = dirs[di][1];
+    let minR = 0, maxR = cfg.gridSize - 1;
+    let minC = 0, maxC = cfg.gridSize - 1;
+    if (dr > 0) maxR = cfg.gridSize - word.length;
+    if (dr < 0) minR = word.length - 1;
+    if (dc > 0) maxC = cfg.gridSize - word.length;
+    if (dc < 0) minC = word.length - 1;
+    if (minR > maxR || minC > maxC) continue;
+    let localTries = 0;
+    while (!placed && localTries < 100) {
+      localTries++;
+      const r = minR + Math.floor(Math.random() * (maxR - minR + 1));
+      const c = minC + Math.floor(Math.random() * (maxC - minC + 1));
+      let ok = true;
+      for (let i = 0; i < word.length; i++) {
+        const rr = r + dr * i, cc = c + dc * i;
+        if (searchGrid[rr][cc] !== '' && searchGrid[rr][cc] !== word[i]) { ok = false; break; }
+      }
+      if (ok) {
+        for (let i = 0; i < word.length; i++) searchGrid[r + dr * i][c + dc * i] = word[i];
+        const cells = [];
+        for (let i = 0; i < word.length; i++) cells.push({ r: r + dr * i, c: c + dc * i });
+        searchWordsPlaced.push({ word: item.word, display: item.display, icon: item.icon, cells: cells });
+        placed = true;
+      }
+    }
+  }
+}
+
+function fillSearchGrid(size) {
+  const L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (!searchGrid[r][c]) searchGrid[r][c] = L[Math.floor(Math.random() * 26)];
+    }
+  }
+}
+
+function renderSearchGrid(size) {
+  const wrap = document.getElementById('srchGrid');
+  wrap.innerHTML = '';
+  for (let r = 0; r < size; r++) {
+    const row = document.createElement('div');
+    row.className = 'grid-row';
+    for (let c = 0; c < size; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.textContent = searchGrid[r][c];
+      cell.dataset.row = r; cell.dataset.col = c;
+      cell.onmousedown = function() {
+        clearSearchSel(true);
+        searchSelecting = true;
+        searchStartPos = { r: r, c: c, cell: cell };
+        searchSelection = [{ r: r, c: c, cell: cell }];
+        cell.classList.add('selected');
+      };
+      cell.onmouseenter = function() { extendSearchSel(r, c, cell); };
+      cell.onmouseup = endSearchSel;
+      cell.ontouchstart = function(e) {
+        e.preventDefault();
+        clearSearchSel(true);
+        searchSelecting = true;
+        searchStartPos = { r: r, c: c, cell: cell };
+        searchSelection = [{ r: r, c: c, cell: cell }];
+        cell.classList.add('selected');
+      };
+      cell.ontouchend = endSearchSel;
+      row.appendChild(cell);
+    }
+    wrap.appendChild(row);
+  }
+}
+
+function renderSearchList(words) {
+  const list = document.getElementById('srchList');
+  list.innerHTML = '';
+  words.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'word-item';
+    el.id = 'wlist-' + item.word;
+    el.innerHTML = '<span class="icon">' + item.icon + '</span> ' + item.display;
+    list.appendChild(el);
+  });
+}
+
+function extendSearchSel(r, c, cell) {
+  if (!searchSelecting || !searchStartPos) return;
+  const dr = r - searchStartPos.r;
+  const dc = c - searchStartPos.c;
+  const dirR = dr === 0 ? 0 : dr / Math.abs(dr);
+  const dirC = dc === 0 ? 0 : dc / Math.abs(dc);
+  const steps = Math.max(Math.abs(dr), Math.abs(dc));
+  if (dirR !== 0 && dirC !== 0 && Math.abs(dr) !== Math.abs(dc)) return;
+  clearSearchSel(true);
+  searchSelection = [];
+  for (let i = 0; i <= steps; i++) {
+    const rr = searchStartPos.r + dirR * i;
+    const cc = searchStartPos.c + dirC * i;
+    const el = document.querySelector('[data-row="' + rr + '"][data-col="' + cc + '"]');
+    if (el) {
+      searchSelection.push({ r: rr, c: cc, cell: el });
+      if (!el.classList.contains('found')) el.classList.add('selected');
+    }
+  }
+}
+
+function endSearchSel() {
+  if (!searchSelecting || !searchSelection.length) return;
+  searchSelecting = false;
+  let word = '';
+  for (let i = 0; i < searchSelection.length; i++) word += searchGrid[searchSelection[i].r][searchSelection[i].c];
+  const rev = word.split('').reverse().join('');
+  let match = null;
+  for (let i = 0; i < searchWordsPlaced.length; i++) {
+    const p = searchWordsPlaced[i];
+    if (!searchFound.includes(p.word) && (p.word === word || p.word === rev)) { match = p; break; }
+  }
+  if (match) {
+    searchFound.push(match.word);
+    match.cells.forEach((pos, i) => {
+      setTimeout(() => {
+        const el = document.querySelector('[data-row="' + pos.r + '"][data-col="' + pos.c + '"]');
+        el.classList.remove('selected');
+        el.classList.add('found');
+      }, i * 50);
+    });
+    const wl = document.getElementById('wlist-' + match.word);
+    if (wl) wl.classList.add('found');
+    document.getElementById('srchFound').textContent = searchFound.length;
+    if (searchFound.length === searchTotalCount) {
+      clearInterval(searchTimer);
+      setTimeout(() => {
+        document.getElementById('srchMsg').textContent = '🎉 All found! Time: ' + document.getElementById('srchTimer').textContent + '!';
+        document.getElementById('srchMsg').classList.add('show');
+      }, 500);
+    }
+  } else {
+    setTimeout(() => clearSearchSel(false), 400);
+  }
+  searchStartPos = null;
+}
+
+function clearSearchSel(keepFound) {
+  searchSelection.forEach(p => {
+    if (!keepFound || !p.cell.classList.contains('found')) {
+      p.cell.classList.remove('selected');
+      p.cell.classList.remove('highlight-hint');
+    }
+  });
+  searchSelection = [];
+}
+
+function showSearchHint() {
+  if (!searchDifficulty) return;
+  let missing = null;
+  for (let i = 0; i < searchWordsPlaced.length; i++) {
+    if (!searchFound.includes(searchWordsPlaced[i].word)) { missing = searchWordsPlaced[i]; break; }
+  }
+  if (!missing) return;
+  const first = missing.cells[0];
+  const cell = document.querySelector('[data-row="' + first.r + '"][data-col="' + first.c + '"]');
+  if (cell && !cell.classList.contains('found')) {
+    cell.classList.add('highlight-hint');
+    setTimeout(() => cell.classList.remove('highlight-hint'), 3000);
+  }
+}
+
+// ==================================================
+// 📝 CROSSWORD
+// ==================================================
+function startCross(diff, btn) {
+  if (!currentLevel) { alert('👆 Select a CEFR level first!'); return; }
+  setActiveBtn('crossBtns', btn);
+  crossDifficulty = diff;
+  const count = [4, 6, 8][diff - 1];
+  crossWords = VOCAB[currentLevel].words.slice(0, count);
+  crossFound = []; crossEntries = []; crossTime = 0; crossCellsRef = {}; crossTypeDir = 'A'; crossStartNums = {};
+  if (crossTimer) clearInterval(crossTimer);
+  document.getElementById('crossTimer').textContent = '00:00';
+  crossTimer = setInterval(() => {
+    crossTime++;
+    const m = Math.floor(crossTime / 60).toString().padStart(2, '0');
+    const s = (crossTime % 60).toString().padStart(2, '0');
+    document.getElementById('crossTimer').textContent = m + ':' + s;
+  }, 1000);
+  document.getElementById('crossFound').textContent = '0';
+  document.getElementById('crossTotal').textContent = count;
+  document.getElementById('crossMsg').classList.remove('show');
+  buildCrosswordGrid();
+}
+
+function restartCross() {
+  if (crossDifficulty) startCross(crossDifficulty, document.querySelector('#crossBtns .btn-primary.active'));
+  else alert('Start a game first!');
+}
+
+function buildCrosswordGrid() {
+  const gridSize = 9;
+  crossGridData = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
+  crossEntries = [];
+  let number = 1;
+
+  const first = crossWords[0];
+  const r0 = Math.floor(gridSize / 2);
+  let c0 = Math.floor((gridSize - first.word.length) / 2);
+  if (c0 < 0) c0 = 0;
+  if (c0 + first.word.length > gridSize) c0 = gridSize - first.word.length;
+  for (let i = 0; i < first.word.length; i++) {
+    crossGridData[r0][c0 + i] = { letter: first.word[i], word: first.word, pos: i, dir: 'A', num: number };
+  }
+  crossEntries.push({ word: first.word, display: first.display, icon: first.icon, clue: first.clue, dir: 'A', num: number, row: r0, col: c0, len: first.word.length });
+  number++;
+
+  for (let wi = 1; wi < crossWords.length; wi++) {
+    const item = crossWords[wi];
+    const word = item.word;
+    let placed = false;
+
+    const shuffled = shuffle(crossEntries);
+    outer:
+    for (let ei = 0; ei < shuffled.length; ei++) {
+      const pw = shuffled[ei];
+      const newDir = pw.dir === 'A' ? 'D' : 'A';
+      for (let pi = 0; pi < pw.len; pi++) {
+        const placedLetter = pw.word[pi];
+        for (let ni = 0; ni < word.length; ni++) {
+          if (word[ni] === placedLetter) {
+            let r, c;
+            if (pw.dir === 'A') { r = pw.row - ni; c = pw.col + pi; }
+            else { r = pw.row + pi; c = pw.col - ni; }
+            if (r < 0 || c < 0) continue;
+            if (newDir === 'A' && c + word.length > gridSize) continue;
+            if (newDir === 'D' && r + word.length > gridSize) continue;
+            let ok = true;
+            for (let i = 0; i < word.length; i++) {
+              const rr = newDir === 'A' ? r : r + i;
+              const cc = newDir === 'A' ? c + i : c;
+              if (crossGridData[rr][cc] !== null && crossGridData[rr][cc].letter !== word[i]) { ok = false; break; }
+            }
+            if (ok) {
+              for (let i = 0; i < word.length; i++) {
+                const rr = newDir === 'A' ? r : r + i;
+                const cc = newDir === 'A' ? c + i : c;
+                if (crossGridData[rr][cc] === null) {
+                  crossGridData[rr][cc] = { letter: word[i], word: word, pos: i, dir: newDir, num: number };
+                }
+              }
+              crossEntries.push({ word: item.word, display: item.display, icon: item.icon, clue: item.clue, dir: newDir, num: number, row: r, col: c, len: word.length });
+              number++; placed = true; break outer;
+            }
+          }
+        }
+      }
+    }
+
+    if (!placed) {
+      const dir = wi % 2 === 0 ? 'A' : 'D';
+      let tries = 0;
+      while (!placed && tries < 300) {
+        tries++;
+        const r = Math.floor(Math.random() * gridSize);
+        const c = Math.floor(Math.random() * gridSize);
+        const len = word.length;
+        if (dir === 'A' && c + len > gridSize) continue;
+        if (dir === 'D' && r + len > gridSize) continue;
+        let ok = true;
+        for (let i = 0; i < len; i++) {
+          const rr = dir === 'A' ? r : r + i;
+          const cc = dir === 'A' ? c + i : c;
+          if (crossGridData[rr][cc] !== null && crossGridData[rr][cc].letter !== word[i]) { ok = false; break; }
+        }
+        if (!ok) continue;
+        for (let i = 0; i < len; i++) {
+          const rr = dir === 'A' ? r : r + i;
+          const cc = dir === 'A' ? c + i : c;
+          if (crossGridData[rr][cc] === null) {
+            crossGridData[rr][cc] = { letter: word[i], word: word, pos: i, dir: dir, num: number };
+          }
+        }
+        crossEntries.push({ word: item.word, display: item.display, icon: item.icon, clue: item.clue, dir: dir, num: number, row: r, col: c, len: len });
+        number++; placed = true;
+      }
+    }
+  }
+  // Standard crossword numbering: take the distinct start cells of the
+  // placed entries, number them row-major (top-to-bottom, left-to-right);
+  // an Across and Down word sharing a start cell share ONE badge number.
+  const startCells = {};
+  crossEntries.forEach(e => { startCells[e.row + '-' + e.col] = true; });
+  crossStartNums = {};
+  let cnum = 1;
+  Object.keys(startCells)
+    .map(k => k.split('-').map(Number))
+    .sort((a, b) => a[0] - b[0] || a[1] - b[1])
+    .forEach(rc => { crossStartNums[rc[0] + '-' + rc[1]] = cnum++; });
+  crossEntries.forEach(e => { e.num = crossStartNums[e.row + '-' + e.col]; });
+
+  renderCrosswordGrid();
+  renderClues();
+}
+
+function renderCrosswordGrid() {
+  const gridSize = 9;
+  const wrap = document.getElementById('crossGrid');
+  wrap.innerHTML = '';
+  crossCellsRef = {};
+  for (let r = 0; r < gridSize; r++) {
+    const row = document.createElement('div');
+    row.className = 'cw-row';
+    for (let c = 0; c < gridSize; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cw-cell';
+      if (crossGridData[r][c] !== null) {
+        const inp = document.createElement('input');
+        inp.maxLength = 1;
+        inp.dataset.r = r;
+        inp.dataset.c = c;
+        inp.addEventListener('input', function(e) {
+          if (this.value.length === 1) {
+            this.value = this.value.toUpperCase();
+            this.parentElement.classList.remove('wrong');
+            const cr = parseInt(this.dataset.r), cc = parseInt(this.dataset.c);
+            let nextRef = null;
+            if (crossTypeDir === 'A' && crossCellsRef[cr + '-' + (cc + 1)]) nextRef = crossCellsRef[cr + '-' + (cc + 1)];
+            else if (crossTypeDir === 'D' && crossCellsRef[(cr + 1) + '-' + cc]) nextRef = crossCellsRef[(cr + 1) + '-' + cc];
+            else if (crossCellsRef[cr + '-' + (cc + 1)]) { nextRef = crossCellsRef[cr + '-' + (cc + 1)]; crossTypeDir = 'A'; }
+            else if (crossCellsRef[(cr + 1) + '-' + cc]) { nextRef = crossCellsRef[(cr + 1) + '-' + cc]; crossTypeDir = 'D'; }
+            if (nextRef) nextRef.input.focus();
+          }
+        });
+        inp.addEventListener('keydown', function(e) {
+          const cr = parseInt(this.dataset.r), cc = parseInt(this.dataset.c);
+          if (e.key === 'Backspace' && this.value === '') {
+            let prevRef = null;
+            if (crossTypeDir === 'A' && crossCellsRef[cr + '-' + (cc - 1)]) prevRef = crossCellsRef[cr + '-' + (cc - 1)];
+            else if (crossTypeDir === 'D' && crossCellsRef[(cr - 1) + '-' + cc]) prevRef = crossCellsRef[(cr - 1) + '-' + cc];
+            else if (crossCellsRef[cr + '-' + (cc - 1)]) { prevRef = crossCellsRef[cr + '-' + (cc - 1)]; crossTypeDir = 'A'; }
+            else if (crossCellsRef[(cr - 1) + '-' + cc]) { prevRef = crossCellsRef[(cr - 1) + '-' + cc]; crossTypeDir = 'D'; }
+            if (prevRef) { prevRef.input.focus(); e.preventDefault(); }
+          }
+          if (e.key === 'ArrowRight' && crossCellsRef[cr + '-' + (cc + 1)]) { crossTypeDir = 'A'; crossCellsRef[cr + '-' + (cc + 1)].input.focus(); e.preventDefault(); }
+          if (e.key === 'ArrowLeft' && crossCellsRef[cr + '-' + (cc - 1)]) { crossTypeDir = 'A'; crossCellsRef[cr + '-' + (cc - 1)].input.focus(); e.preventDefault(); }
+          if (e.key === 'ArrowDown' && crossCellsRef[(cr + 1) + '-' + cc]) { crossTypeDir = 'D'; crossCellsRef[(cr + 1) + '-' + cc].input.focus(); e.preventDefault(); }
+          if (e.key === 'ArrowUp' && crossCellsRef[(cr - 1) + '-' + cc]) { crossTypeDir = 'D'; crossCellsRef[(cr - 1) + '-' + cc].input.focus(); e.preventDefault(); }
+        });
+        inp.addEventListener('focus', function() {
+          const cr = parseInt(this.dataset.r), cc = parseInt(this.dataset.c);
+          if (crossCellsRef[cr + '-' + (cc + 1)]) crossTypeDir = 'A';
+          else if (crossCellsRef[(cr + 1) + '-' + cc]) crossTypeDir = 'D';
+        });
+        cell.appendChild(inp);
+        const startNum = crossStartNums[r + '-' + c];
+        if (startNum != null) {
+          const num = document.createElement('span');
+          num.className = 'cw-number';
+          num.textContent = startNum;
+          cell.appendChild(num);
+        }
+        crossCellsRef[r + '-' + c] = { input: inp, data: crossGridData[r][c] };
+      } else {
+        cell.classList.add('blocked');
+      }
+      row.appendChild(cell);
+    }
+    wrap.appendChild(row);
+  }
+}
+
+function renderClues() {
+  const across = crossEntries.filter(e => e.dir === 'A').sort((a, b) => a.num - b.num);
+  const down = crossEntries.filter(e => e.dir === 'D').sort((a, b) => a.num - b.num);
+  const aDiv = document.getElementById('cluesAcross');
+  const dDiv = document.getElementById('cluesDown');
+  aDiv.innerHTML = ''; dDiv.innerHTML = '';
+  across.forEach(e => {
+    const el = document.createElement('div');
+    el.className = 'clue'; el.id = 'clue-A-' + e.num;
+    el.textContent = e.num + '. ' + e.clue;
+    aDiv.appendChild(el);
+  });
+  down.forEach(e => {
+    const el = document.createElement('div');
+    el.className = 'clue'; el.id = 'clue-D-' + e.num;
+    el.textContent = e.num + '. ' + e.clue;
+    dDiv.appendChild(el);
+  });
+}
+
+function checkCross() {
+  document.querySelectorAll('.cw-cell input').forEach(inp => {
+    const r = parseInt(inp.dataset.r), c = parseInt(inp.dataset.c);
+    const ref = crossCellsRef[r + '-' + c];
+    if (!ref) return;
+    const expected = ref.data.letter;
+    const given = inp.value.toUpperCase().trim();
+    const parent = inp.parentElement;
+    parent.classList.remove('correct'); parent.classList.remove('wrong');
+    if (given === '') return;
+    if (given === expected) parent.classList.add('correct');
+    else parent.classList.add('wrong');
+  });
+
+  crossFound = [];
+  crossEntries.forEach(entry => {
+    let allCorrect = true;
+    for (let i = 0; i < entry.len; i++) {
+      const rr = entry.dir === 'A' ? entry.row : entry.row + i;
+      const cc = entry.dir === 'A' ? entry.col + i : entry.col;
+      const ref = crossCellsRef[rr + '-' + cc];
+      if (!ref) { allCorrect = false; break; }
+      const given = ref.input.value.toUpperCase().trim();
+      if (given !== entry.word[i]) { allCorrect = false; break; }
+    }
+    if (allCorrect) crossFound.push(entry.word);
+  });
+
+  crossFound = [...new Set(crossFound)];
+  document.getElementById('crossFound').textContent = crossFound.length;
+  crossEntries.forEach(e => {
+    const clue = document.getElementById('clue-' + e.dir + '-' + e.num);
+    if (crossFound.includes(e.word)) clue.classList.add('solved');
+    else clue.classList.remove('solved');
+  });
+
+  if (crossFound.length === crossEntries.length && crossEntries.length > 0) {
+    clearInterval(crossTimer);
+    setTimeout(() => {
+      document.getElementById('crossMsg').textContent = '🎉 Crossword complete! Time: ' + document.getElementById('crossTimer').textContent + '!';
+      document.getElementById('crossMsg').classList.add('show');
+    }, 500);
+  }
+}
+
+function showCrossHint() {
+  if (!crossDifficulty) { alert('Start a game first!'); return; }
+  let missing = null;
+  for (let i = 0; i < crossEntries.length; i++) {
+    if (!crossFound.includes(crossEntries[i].word)) { missing = crossEntries[i]; break; }
+  }
+  if (!missing) return;
+  const ref = crossCellsRef[missing.row + '-' + missing.col];
+  if (ref) {
+    ref.input.parentElement.classList.add('highlight-hint');
+    setTimeout(() => ref.input.parentElement.classList.remove('highlight-hint'), 3000);
+  }
+}
+
+// ==================================================
+// ⛄ SNOWMAN GUESS (letter-guessing game)
+// ==================================================
+function startHangman(diff, btn) {
+  if (!currentLevel) { alert('👆 Select a CEFR level first!'); return; }
+  setActiveBtn('hangBtns', btn);
+  hangDifficulty = diff;
+  const count = [4, 6, 8][diff - 1];
+  hangQueue = shuffle(VOCAB[currentLevel].words.slice(0, count));
+  hangSolved = 0; hangTime = 0; hangLocked = false;
+  if (hangTimer) clearInterval(hangTimer);
+  document.getElementById('hangTimer').textContent = '00:00';
+  hangTimer = setInterval(() => {
+    hangTime++;
+    const m = Math.floor(hangTime / 60).toString().padStart(2, '0');
+    const s = (hangTime % 60).toString().padStart(2, '0');
+    document.getElementById('hangTimer').textContent = m + ':' + s;
+  }, 1000);
+  document.getElementById('hangSolved').textContent = '0';
+  document.getElementById('hangWordTotal').textContent = hangQueue.length;
+  document.getElementById('hangMsg').classList.remove('show');
+  buildHangmanKeyboard();
+  nextHangmanWord();
+}
+
+function restartHangman() {
+  if (hangDifficulty) startHangman(hangDifficulty, document.querySelector('#hangBtns .btn-primary.active'));
+  else alert('Start a game first!');
+}
+
+function buildHangmanKeyboard() {
+  const kb = document.getElementById('hangKeyboard');
+  kb.innerHTML = '';
+  ALPHABET.forEach(letter => {
+    const b = document.createElement('button');
+    b.className = 'hm-key';
+    b.textContent = letter;
+    b.dataset.letter = letter;
+    b.onclick = () => hangmanGuess(letter);
+    kb.appendChild(b);
+  });
+}
+
+function resetHangmanKeyboard() {
+  document.querySelectorAll('.hm-key').forEach(b => {
+    b.disabled = false;
+    b.classList.remove('correct', 'wrong');
+  });
+}
+
+function nextHangmanWord() {
+  if (hangQueue.length === 0) {
+    clearInterval(hangTimer);
+    const total = parseInt(document.getElementById('hangWordTotal').textContent);
+    document.getElementById('hangMsg').textContent = '🎄 Round complete! You solved ' + hangSolved + '/' + total + ' words in ' + document.getElementById('hangTimer').textContent + '!';
+    document.getElementById('hangMsg').classList.add('show');
+    return;
+  }
+  hangCurrent = hangQueue.shift();
+  hangGuessed = new Set();
+  hangWrong = 0;
+  hangLocked = false;
+  SNOWMAN_PARTS.forEach(id => document.getElementById(id).classList.remove('show'));
+  resetHangmanKeyboard();
+  document.getElementById('hangWordNum').textContent = parseInt(document.getElementById('hangWordTotal').textContent) - hangQueue.length;
+  document.getElementById('hangWrong').textContent = '0';
+  document.getElementById('hangClue').textContent = '💡 ' + hangCurrent.clue;
+  document.getElementById('hangStatus').textContent = '';
+  document.getElementById('hangStatus').className = 'hangman-status';
+  renderHangmanWord();
+}
+
+function renderHangmanWord() {
+  const wrap = document.getElementById('hangWord');
+  wrap.innerHTML = '';
+  const word = hangCurrent.word;
+  for (let i = 0; i < word.length; i++) {
+    const span = document.createElement('span');
+    span.className = 'hm-letter';
+    if (hangGuessed.has(word[i])) {
+      span.textContent = word[i];
+      span.classList.add('revealed');
+    } else if (hangLocked) {
+      span.textContent = word[i];
+      span.classList.add('missed');
+    } else {
+      span.textContent = '';
+    }
+    wrap.appendChild(span);
+  }
+}
+
+function hangmanGuess(letter) {
+  if (!hangCurrent || hangLocked) return;
+  if (hangGuessed.has(letter)) return;
+  hangGuessed.add(letter);
+  const keyBtn = document.querySelector('.hm-key[data-letter="' + letter + '"]');
+  const word = hangCurrent.word;
+
+  if (word.includes(letter)) {
+    keyBtn.classList.add('correct');
+    keyBtn.disabled = true;
+    renderHangmanWord();
+    let allRevealed = true;
+    for (let i = 0; i < word.length; i++) {
+      if (!hangGuessed.has(word[i])) { allRevealed = false; break; }
+    }
+    if (allRevealed) {
+      hangSolved++;
+      document.getElementById('hangSolved').textContent = hangSolved;
+      document.getElementById('hangStatus').textContent = '✅ Solved! ' + hangCurrent.display + ' — next word...';
+      document.getElementById('hangStatus').className = 'hangman-status win';
+      hangLocked = true;
+      document.querySelectorAll('.hm-key').forEach(b => b.disabled = true);
+      setTimeout(nextHangmanWord, 1800);
+    }
+  } else {
+    keyBtn.classList.add('wrong');
+    keyBtn.disabled = true;
+    hangWrong++;
+    document.getElementById('hangWrong').textContent = hangWrong;
+    document.getElementById(SNOWMAN_PARTS[hangWrong - 1]).classList.add('show');
+    if (hangWrong >= HANGMAN_MAX_WRONG) {
+      document.getElementById('hangStatus').textContent = '⛄ The snowman melted! The word was: ' + hangCurrent.display + ' — next word...';
+      document.getElementById('hangStatus').className = 'hangman-status lose';
+      hangLocked = true;
+      document.querySelectorAll('.hm-key').forEach(b => b.disabled = true);
+      renderHangmanWord();
+      setTimeout(nextHangmanWord, 2500);
+    }
+  }
+}
+
+function hangmanHint() {
+  if (!hangCurrent || hangLocked) { alert('Start a game first!'); return; }
+  const word = hangCurrent.word;
+  const missing = [];
+  for (let i = 0; i < word.length; i++) {
+    if (!hangGuessed.has(word[i])) missing.push(word[i]);
+  }
+  if (missing.length === 0) return;
+  const hintLetter = missing[Math.floor(Math.random() * missing.length)];
+  hangmanGuess(hintLetter);
+}
+</script>
+</body>
+</html>

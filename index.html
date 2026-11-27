@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEFR Holiday Vocab Games — Halloween 🎃 & Christmas 🎄</title>
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
+  body {
+    background: #0f0f23;
+    background-image: radial-gradient(#2a2a55 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: #fff;
+    min-height: 100vh;
+    padding: 30px 16px 50px;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 26px; }
+  h1 { color: #ffd700; font-size: 2rem; text-shadow: 0 0 10px rgba(255,215,0,0.4); margin-bottom: 8px; }
+  .subtitle { color: #c5c6c7; font-size: 1rem; }
+  .levels { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 18px 0 8px; }
+  .chip { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; }
+  .c1 { background: #4cd137; color: #0f3d0a; }
+  .c2 { background: #a8e063; color: #2d5a00; }
+  .c3 { background: #ffd700; color: #5c4a00; }
+  .c4 { background: #ff9f1c; color: #5c3700; }
+  .c5 { background: #ff6b35; color: #fff; }
+  .c6 { background: #e63946; color: #fff; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 26px 0; }
+  .card {
+    background: rgba(37,37,71,0.75);
+    border: 2px solid #3a3a6b;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: all 0.25s ease;
+  }
+  .card:hover { border-color: #ffd700; transform: translateY(-3px); }
+  .card .icon { font-size: 2.6rem; text-align: center; }
+  .card h2 { color: #ffd700; font-size: 1.3rem; text-align: center; }
+  .card p.desc { color: #c5c6c7; font-size: 0.92rem; text-align: center; }
+  .games { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .games span { background: #252547; border: 1px solid #3a3a6b; padding: 5px 12px; border-radius: 14px; font-size: 0.82rem; }
+  .play {
+    display: block; text-align: center; text-decoration: none;
+    background: #ff6b35; color: #fff; font-weight: bold;
+    padding: 12px; border-radius: 10px; margin-top: auto;
+    transition: all 0.2s ease;
+  }
+  .play:hover { background: #ff8c5a; transform: scale(1.03); }
+  .play.xmas { background: #2e8b57; }
+  .play.xmas:hover { background: #3aa96b; }
+  section.info {
+    background: rgba(37,37,71,0.6); border-radius: 14px; padding: 20px 24px; margin-top: 18px;
+  }
+  section.info h3 { color: #ffd700; margin-bottom: 10px; font-size: 1.05rem; }
+  section.info ol, section.info ul { padding-left: 22px; color: #c5c6c7; font-size: 0.92rem; line-height: 1.7; }
+  footer { text-align: center; color: #888; font-size: 0.82rem; margin-top: 34px; }
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; }
+    h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🎃 CEFR Holiday Vocab Games 🎄</h1>
+    <p class="subtitle">Four mini-games × six CEFR levels × two holiday themes — built for the English classroom.</p>
+    <div class="levels">
+      <span class="chip c1">A1 Beginner</span>
+      <span class="chip c2">A2 Elementary</span>
+      <span class="chip c3">B1 Intermediate</span>
+      <span class="chip c4">B2 Upper-Intermediate</span>
+      <span class="chip c5">C1 Advanced</span>
+      <span class="chip c6">C2 Mastery</span>
+    </div>
+  </header>
+
+  <div class="cards">
+    <div class="card">
+      <div class="icon">🎃</div>
+      <h2>Halloween Edition</h2>
+      <p class="desc">Spooky holiday vocabulary, from simple nouns (ghost, pumpkin) to rare literary words (wraith, sepulchral).</p>
+      <div class="games">
+        <span>🧠 Memory</span><span>🔤 Word Search</span><span>📝 Crossword</span><span>💀 Hangman</span>
+      </div>
+      <a class="play" href="halloween-cefr-games.html">Play Halloween Games →</a>
+    </div>
+    <div class="card">
+      <div class="icon">🎄</div>
+      <h2>Christmas Edition</h2>
+      <p class="desc">Festive winter-holiday vocabulary matched to each proficiency level, with the same four game formats.</p>
+      <div class="games">
+        <span>🧠 Memory</span><span>🔤 Word Search</span><span>📝 Crossword</span><span>☃️ Snowman Word Game</span>
+      </div>
+      <a class="play xmas" href="christmas-cefr-games.html">Play Christmas Games →</a>
+    </div>
+  </div>
+
+  <section class="info">
+    <h3>How to play</h3>
+    <ol>
+      <li>Pick your CEFR level with the colored buttons (A1 → C2).</li>
+      <li>Choose a game tab: Memory, Word Search, Crossword, or the word-guessing game.</li>
+      <li>Pick a difficulty level (1 easy → 3 challenging). Timers, moves and hints are built in.</li>
+    </ol>
+  </section>
+
+  <section class="info">
+    <h3>For teachers</h3>
+    <ul>
+      <li><strong>Fully self-contained:</strong> each game is one HTML file with no images, audio, fonts or network dependencies — works offline.</li>
+      <li><strong>Easy to share:</strong> send the file by email, USB drive, or open it on an interactive whiteboard; also playable from this hosted page.</li>
+      <li><strong>12 words per CEFR level</strong>, each with an emoji icon and a definition clue; difficulty 1–3 adjusts word count and board size.</li>
+      <li>Free for classroom use. Adapt the word lists in the file’s <code>VOCAB</code> object for your own students.</li>
+    </ul>
+  </section>
+
+  <footer>🎃🎄 CEFR Holiday Vocab Games · Works in any modern browser · No installation required</footer>
+</div>
+</body>
+</html>
