@@ -534,7 +534,7 @@ function startMem(diff, btn) {
   document.getElementById('memMsg').classList.remove('show');
   const board = document.getElementById('memBoard');
   board.innerHTML = '';
-  board.style.gridTemplateColumns = 'repeat(' + (diff===1?4:diff===2?4:6) + ', 1fr)';
+  board.style.gridTemplateColumns = 'repeat(' + (diff===1?4:diff===2?4:6) + ', minmax(70px, 1fr))';
   memCards.forEach((item, idx) => {
     const card = document.createElement('div');
     card.className = 'card';
