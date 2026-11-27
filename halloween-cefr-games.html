@@ -191,11 +191,18 @@
   .hidden { display: none !important; }
 
   @media (max-width: 480px) {
-    .card { width: 85px; height: 110px; }
+    .game-board {
+      grid-template-columns: repeat(6, minmax(50px, 1fr)) !important;
+      gap: 6px !important;
+    }
+    .card {
+      width: auto !important;
+      height: 75px !important;
+      padding: 4px !important;
+    }
+    .card .icon { font-size: 1.6rem !important; }
+    .card .word { font-size: 0.7rem !important; }
     .cell, .cw-cell { width: 30px; height: 30px; font-size: 0.85rem; }
-    .hm-letter { width: 26px; height: 36px; font-size: 1.3rem; }
-    .hangman-keyboard { grid-template-columns: repeat(7, 1fr); gap: 4px; }
-    .hm-key { padding: 8px 0; font-size: 0.85rem; }
     h1 { font-size: 1.4rem; }
   }
 </style>
